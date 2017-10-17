@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -46,60 +45,13 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    // protected function validator(array $request)
-    // {
-    //     return Validator::make($data, [
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|string|email|max:255|unique:users',
-    //         'password' => 'required|string|min:6|confirmed',
-    //     ]);
-    // }
-
-    public function register(Request $request)
+    protected function validator(array $data)
     {
-        // die(response()->json($request));
-        // Here the request is validated. The validator method is located
-        // inside the RegisterController, and makes sure the name, email
-        // password and password_confirmation fields are required.
-        $validation = Validator::make($request->all(),[
+        return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:6|confirmed',
         ]);
-        
-        if ($validation->fails()) {
-            // dd(response()->json($validation->getMessageBag()->all()));
-            return response()->json($validation->getMessageBag()->all(), 422);
-        }
-
-        // A Registered event is created and will trigger any relevant
-        // observers, such as sending a confirmation email or any 
-        // code that needs to be run as soon as the user is created.
-        $user = $this->create($request->all());
-    
-        // After the user is created, he's logged in.
-        $this->guard()->login($user);
-    
-        // And finally this is the hook that we want. If there is no
-        // registered() method or it returns null, redirect him to
-        // some other URL. In our case, we just need to implement
-        // that method to return the correct response.
-        return $this->registered($request, $user)
-                        ?: redirect($this->redirectPath());
-    }
-
-    /**
-    * The user has been registered.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @param  mixed  $user
-    * @return mixed
-    */
-    protected function registered(Request $request, $user)
-    {
-        $user->generateToken();
-    
-        return response()->json(['data' => $user->toArray()], 201);
     }
 
     /**
@@ -116,5 +68,4 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
         ]);
     }
-
 }
