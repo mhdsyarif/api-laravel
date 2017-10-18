@@ -34,6 +34,11 @@ class LoginController extends Controller
      *
      * @return void
      */
+    
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
 
     public function login(Request $request)
     {
@@ -67,8 +72,4 @@ class LoginController extends Controller
         return response()->json($errors, 422);
     }
     
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-    }
 }
